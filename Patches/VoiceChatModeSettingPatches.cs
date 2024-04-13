@@ -13,9 +13,7 @@ namespace PushToMute.Patches
 
         // Toggle Mute
         internal static int ToggleMuteIndex;
-
-        // Push to Talk
-        internal static int PushToTalkIndex;
+        internal static bool canTalk = true;
 
         // Show the muted text
         internal static bool showMutedImage = false;
@@ -25,7 +23,6 @@ namespace PushToMute.Patches
         [HarmonyPatch(nameof(VoiceChatModeSetting.GetChoices))]
         private static void GetChoicesPatch(ref List<string> __result)
         {
-            PushToTalkIndex = __result.FindIndex(x => x == "Push to Talk");
             __result.Add("Push to Mute");
             PushToMuteIndex = __result.Count - 1;
             __result.Add("Toggle Mute");
@@ -40,28 +37,19 @@ namespace PushToMute.Patches
         private static void CanTalkPatch(ref bool __result, ref VoiceChatModeSetting __instance)
         {
             bool isPressingPushToTalkKey = GlobalInputHandler.PushToTalkKey.GetKey();
-
-            // Cannot be a switch statement because the values are not constant ):
-            if (__instance.Value == PushToTalkIndex)
+            if (__instance.Value == PushToMuteIndex)
             {
-                VoiceChatModeSettingPatches.showMutedImage = isPressingPushToTalkKey ? false : true;
-            }
-            else if (__instance.Value == PushToMuteIndex)
-            {
-                VoiceChatModeSettingPatches.showMutedImage = isPressingPushToTalkKey;
                 __result = !isPressingPushToTalkKey;
             }
             else if (__instance.Value == ToggleMuteIndex)
             {
                 bool keyWasJustPressed = !wasPressingButton && isPressingPushToTalkKey;
-                VoiceChatModeSettingPatches.showMutedImage = keyWasJustPressed ? !VoiceChatModeSettingPatches.showMutedImage : VoiceChatModeSettingPatches.showMutedImage;
-                __result = !VoiceChatModeSettingPatches.showMutedImage;
-            }
-            else
-            {
-                VoiceChatModeSettingPatches.showMutedImage = false;
+                canTalk = keyWasJustPressed ? !canTalk : canTalk;
+                __result = canTalk;
             }
             wasPressingButton = isPressingPushToTalkKey;
+
+            showMutedImage = !__result;
         }
     }
 }

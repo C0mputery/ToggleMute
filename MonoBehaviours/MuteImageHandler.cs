@@ -14,10 +14,10 @@ namespace ToggleMute
         public void LateUpdate()
         {
             image.sprite = VoiceChatModeSettingPatches.showMutedImage ? mutedSprite : unmutedSprite;
-            var a = Player.localPlayer.data.microphoneValue;
-            a *= 0.5f;
-            a = a.Clamp(0.1f, 1f);
-            image.color = new Color(image.color.r, image.color.g, image.color.b, a);
+            float MicVol = Player.localPlayer.data.microphoneValue;
+            MicVol *= 0.5f;
+            MicVol = MicVol.Clamp(0.1f, 1f);
+            image.color = new Color(image.color.r, image.color.g, image.color.b, MicVol);
         }
     }
 }
