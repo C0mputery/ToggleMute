@@ -95,6 +95,9 @@
         <Reference Include="UnityEngine.AssetBundleModule" Publicize="false" Private="false">
             <HintPath>$(ManagedDirectory)UnityEngine.AssetBundleModule.dll</HintPath>
         </Reference>
+        <Reference Include="Zorro.Settings.Runtime" Publicize="false" Private="false">
+            <HintPath>$(ManagedDirectory)Zorro.Settings.Runtime.dll</HintPath>
+        </Reference>
     </ItemGroup>
   
     <!-- Package References - Game Assemblies -->

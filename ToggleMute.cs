@@ -14,18 +14,27 @@ namespace ToggleMute;
 public class ToggleMute : BaseUnityPlugin
 {
     internal static Assembly ToggleMuteAssembly => Assembly.GetExecutingAssembly();
-    internal static ToggleMute Instance { get; private set; } = null!;
     internal static ManualLogSource DebugLogger { get; private set; } = null!;
-    internal static Harmony? Harmony { get; set; } = null!;
+    internal static Harmony Harmony { get; set; } = null!;
+
+    internal static string MUTE_UI_ASSET_BUNDLE_PATH = "ToggleMute.Resources.MuteUI.AssetBundle";
+    internal static AssetBundle MuteUIAssetBundle = null!;
 
     private void Awake()
     {
-        Instance = this;
         DebugLogger = base.Logger;
+        DebugLogger.LogInfo($"Logging set.");
+
+        MuteUIAssetBundle = Utilities.EmbeddedResources.LoadAssetBundleFromResources(MUTE_UI_ASSET_BUNDLE_PATH)!;
+        if (MuteUIAssetBundle == null) { DebugLogger.LogError($"Failed to load asset bundle from {MUTE_UI_ASSET_BUNDLE_PATH}"); }
+        else { DebugLogger.LogInfo($"Loaded asset bundle from {MUTE_UI_ASSET_BUNDLE_PATH}"); }
+
         Harmony = Harmony.CreateAndPatchAll(ToggleMuteAssembly);
+        DebugLogger.LogInfo($"Patched {Harmony.GetPatchedMethods().Count()} methods.");
 
-        DebugLogger.LogInfo("Loading asset bundles from resources...");
+        new VoiceChatModeSetting().GetChoices(); // Propigate the possible choices
+        DebugLogger.LogInfo($"Propigated the possible choices for the VoiceChatModeSetting.");
 
-        DebugLogger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
+        DebugLogger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded.");
     }
 }

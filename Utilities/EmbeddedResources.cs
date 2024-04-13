@@ -7,27 +7,23 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace ToggleMute.Utilitys
+namespace ToggleMute.Utilities
 {
 
     //ToggleMute.Resources.MuteUI.AssetBundle
     internal static class EmbeddedResources
     {
-        internal static bool LoadAssetBundleFromResources(string assetBundlePath, [NotNullWhen(true)] out AssetBundle? assetBundle)
+        internal static AssetBundle? LoadAssetBundleFromResources(string assetBundlePath)
         {
-            if (!ToggleMute.ToggleMuteAssembly.GetManifestResourceNames().Contains(assetBundlePath))
-            {
-                assetBundle = null;
-                return false;
-            }
+            if (!ToggleMute.ToggleMuteAssembly.GetManifestResourceNames().Contains(assetBundlePath)) { return null; }
 
             using (Stream manifestResourceStream = ToggleMute.ToggleMuteAssembly.GetManifestResourceStream(assetBundlePath))
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 manifestResourceStream.CopyTo(memoryStream);
-                assetBundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
+                AssetBundle assetBundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
+                return assetBundle;
             }
-            return true;
         }
     }
 }
