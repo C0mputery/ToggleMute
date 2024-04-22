@@ -16,12 +16,9 @@ namespace ToggleMute.Utilities
         internal static AssetBundle? LoadAssetBundleFromResources(string assetBundlePath)
         {
             if (!ToggleMute.ToggleMuteAssembly.GetManifestResourceNames().Contains(assetBundlePath)) { return null; }
-
             using (Stream manifestResourceStream = ToggleMute.ToggleMuteAssembly.GetManifestResourceStream(assetBundlePath))
-            using (MemoryStream memoryStream = new MemoryStream())
             {
-                manifestResourceStream.CopyTo(memoryStream);
-                AssetBundle assetBundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
+                AssetBundle assetBundle = AssetBundle.LoadFromStream(manifestResourceStream);
                 return assetBundle;
             }
         }
